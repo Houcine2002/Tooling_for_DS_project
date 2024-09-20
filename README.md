@@ -1,105 +1,97 @@
-## Preferred IDE: Pycharm
+# Diabetes Disease Prediction System
 
-### Test the streamlit app on local:
+This README provides instructions on how to set up and run the Diabetes Disease Prediction System using Docker.
 
-1. Install required dependencies on local:
+## Table of Contents
+- [Features](#features)
+- [Installation](#installation)
+- [Running the Application](#running-the-application)
+- [Docker Container Setup](#docker-container-setup)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
 
-```commandline
-pip install -r requirements.txt
-```
-
-
-2. Test the streamlit app on local:
-
-```
-streamlit run app.py
-```
+## Features
+- **Diabetes Prediction**: Predicts if a person has diabetes based on input features.
 
 
-### Building the docker image
+## Installation
 
-(Note: Run as administrator on Windows and remove "sudo" in commands)
+### Prerequisites
+- Docker (download and install from [Docker Installation Guide](https://docs.docker.com/get-docker/))
 
-3. Important - Make sure you have installed Docker on your PC:
-- Linux: Docker
-- Windows/Mac: Docker Desktop
+### Set Up Your Project
+1. Clone or create a directory containing your app files:
+    - `app.py` (Streamlit application)
+    - `saved_models/` (folder containing machine learning models)
+    - `requirements.txt` (file listing the Python dependencies)
+    - `Dockerfile` (Docker configuration)
 
-4. Start Docker:
-- Linux (Home Directory):
-  ```
-  sudo systemctl start docker
-  ```
-- Windows: You can start Docker engine from Docker Desktop.
+### Dockerfile
+Create a `Dockerfile` in your project directory with the following content:
 
-5. Build Docker image from the project directory:
+```dockerfile
+# Use a lightweight Python image
+FROM python:3.10-slim
 
-```commandline
-sudo docker build -t Image_name:tag .
-```
+# Copy your project files into the Docker image
+COPY . /sapp
 
-### (Note: Rerun the Docker build command if you want to make any changes to the code files and redeploy.)
+# Set the working directory to /app
+WORKDIR /sapp
 
-### Running the container & removing it
+# Install all required Python packages
+RUN pip install -r requirements.txt
 
-6. witch to Home Directory:
+# Expose port 80 to the outside world
+EXPOSE 80
 
-```
-cd ~
-```
-List the built Docker images
-```
-$ sudo docker images
-```
+# Create necessary directories for Streamlit
+RUN mkdir ~/.streamlit
+RUN cp config.toml ~/.streamlit/config.toml
+RUN cp credentials.toml ~/.streamlit/credentials.toml
 
-7. Start a container:
-```commandline
-sudo docker run -p 80:80 Image_ID
-```
+# Set the default command to run the app with Streamlit
+ENTRYPOINT ["streamlit", "run"]
 
-8. This will display the URL to access the Streamlit app (http://0.0.0.0:80). Note that this URL may not work on Windows. For Windows, go to http://localhost/.
+# Set the default app to app.py
+CMD ["app.py"]
 
-9. In a different terminal window, you can check the running containers with:
-```
-sudo docker ps
-```
+# Build the Docker Image
 
-10. Stop the container:
- - Use `ctrl + c` or stop it from Docker Desktop.
+docker build -t disease-prediction-app .
+# run docker container
+docker run -p 80:80 disease-prediction-app
 
-11. Check all containers:
- ```
- sudo docker ps -a
- ```
+# Access the Application/
+Open your web browser and go to http://127.0.0.1:80 or  http://0.0.0.0:80 to access the app.
 
-12. Delete the container if you are not going to run this again:
- ```
- sudo docker container prune
- ```
+# Stop the Container
+# To stop the running container, first find the container ID
+docker ps
 
-### Pushing the docker image to Docker Hub
+# Then stop it with
+docker stop <container_id>
 
-13. Sign up on Docker Hub.
+# (Optional) Push Docker Image to Docker Hub
+docker login
+# Tag and push your image:
+docker tag disease-prediction-app your-dockerhub-username/disease-prediction-app
+docker push your-dockerhub-username/disease-prediction-app
 
-14. Create a repository on Docker Hub.
+# Running the App on Any Machine
+docker pull your-dockerhub-username/disease-prediction-app
+docker run -p 8501:80 your-dockerhub-username/disease-prediction-app
 
-15. Log in to Docker Hub from the terminal. You can log in with your password or access token.
-```
-sudo docker login
-```
+# Project Structure
 
-17. Tag your local Docker image to the Docker Hub repository:
- ```
- sudo docker tag Image_ID username/repo-name:tag
- ```
+.
+├── Dockerfile                # Dockerfile to build the container
+├── app.py                    # Main Streamlit app
+├── requirements.txt          # Python dependencies
+├── saved_models/             # Pre-trained machine learning models
+│   ├── diabetes_model.sav
+├── config.toml               # Streamlit configuration file
+├── credentials.toml          # Streamlit credentials file
+└── README.md                 # Project documentation
 
-17. Push the local Docker image to the Docker Hub repository:
- ```
- sudo docker push username/repo-name:tag
- ```
 
-(If you want to delete the image, you can delete the repository in Docker Hub and force delete it locally.)
-
-18. Command to force delete an image (but don't do this yet):
- ```
- $ sudo docker rmi -f IMAGE_ID
- ```
