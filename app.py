@@ -3,7 +3,7 @@ import streamlit as st
 import plotly.graph_objects as go
 
 # Load the saved diabetes model
-diabetes_model = pickle.load(open('saved_models/diabetes_model.sav', 'rb'))
+diabetes_model = pickle.load(open('diabetes_model.sav', 'rb'))
 
 # Main page
 st.title('Diabetes Prediction using ML')
