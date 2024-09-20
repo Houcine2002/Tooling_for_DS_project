@@ -2,10 +2,10 @@
 FROM python:3.10-slim
 
 # This copies everything in your current directory to the /app directory in the container.
-COPY . /app
+COPY . /sapp
 
 # This sets the /app directory as the working directory for any RUN, CMD, ENTRYPOINT, or COPY instructions that follow.
-WORKDIR /app
+WORKDIR /sapp
 
 # This runs pip install for all the packages listed in your requirements.txt file.
 RUN pip install -r requirements.txt

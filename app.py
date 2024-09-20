@@ -1,10 +1,9 @@
 import pickle
 import streamlit as st
-import matplotlib.pyplot as plt
-import seaborn as sns
+import plotly.graph_objects as go
 
 # Load the saved diabetes model
-diabetes_model = pickle.load(open('diabetes_model.sav', 'rb'))
+diabetes_model = pickle.load(open('saved_models/diabetes_model.sav', 'rb'))
 
 # Main page
 st.title('Diabetes Prediction using ML')
@@ -47,11 +46,17 @@ if st.button('Diabetes Test Result'):
         features = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age']
         values = user_input
         
-        # Plotting
-        fig, ax = plt.subplots()
-        sns.barplot(x=features, y=values, ax=ax)
-        ax.set_title('Feature Values for Diabetes Prediction')
-        ax.set_xticklabels(features, rotation=45, ha='right')
-        st.pyplot(fig)
+        # Interactive Bar Chart with Plotly
+        fig = go.Figure()
+        fig.add_trace(go.Bar(x=features, y=values, name='Feature Values'))
+        fig.update_layout(title='Feature Values for Diabetes Prediction', xaxis_title='Features', yaxis_title='Values')
+        st.plotly_chart(fig)
+        
+        # Interactive Pie Chart with Plotly
+        fig = go.Figure()
+        fig.add_trace(go.Pie(labels=features, values=values, hole=0.3))
+        fig.update_layout(title='Feature Proportions for Diabetes Prediction')
+        st.plotly_chart(fig)
+        
     except ValueError:
         st.error("Please enter valid values for all fields.")
